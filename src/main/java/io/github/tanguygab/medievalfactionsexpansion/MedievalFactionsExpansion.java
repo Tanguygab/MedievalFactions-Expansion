@@ -69,11 +69,11 @@ public final class MedievalFactionsExpansion extends PlaceholderExpansion {
         return switch (params) {
             case "enemies" -> relations.getFactionsAtWarWithByFactionId(faction.getId())
                     .stream()
-                    .map(f->factions.getFactionByPlayerId(f.getValue()).getName())
+                    .map(f->factions.getFactionByFactionId(f.getValue()).getName())
                     .collect(Collectors.joining(del));
             case "allies" -> relations.getAlliesByFactionId(faction.getId())
                     .stream()
-                    .map(f->factions.getFactionByPlayerId(f.getValue()).getName())
+                    .map(f->factions.getFactionByFactionId(f.getValue()).getName())
                     .collect(Collectors.joining(del));
             case "description" -> faction.getDescription();
             case "laws" -> laws.getLawsByFactionId(faction.getId())
