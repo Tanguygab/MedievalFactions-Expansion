@@ -5,14 +5,17 @@ import com.dansplugins.factionsystem.faction.MfFaction;
 import com.dansplugins.factionsystem.faction.MfFactionService;
 import com.dansplugins.factionsystem.law.MfLaw;
 import com.dansplugins.factionsystem.law.MfLawService;
+import com.dansplugins.factionsystem.player.MfPlayerId;
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService;
 import com.dansplugins.factionsystem.service.Services;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class MedievalFactionsExpansion extends PlaceholderExpansion {
@@ -53,6 +56,15 @@ public final class MedievalFactionsExpansion extends PlaceholderExpansion {
             del = "\n";
             params = params.substring(0,params.length()-3);
         }
+
+        if (params.startsWith("members_with_")) {
+            String role = params.substring(13);
+            return faction.getMembers().stream()
+                    .filter(m->m.getRole() == faction.getRoleByName(role))
+                    .map(member -> Bukkit.getServer().getOfflinePlayer(UUID.fromString(member.getPlayerId())).getName())
+                    .collect(Collectors.joining(del));
+        }
+
 
         return switch (params) {
             case "enemies" -> relations.getFactionsAtWarWithByFactionId(faction.getId())
