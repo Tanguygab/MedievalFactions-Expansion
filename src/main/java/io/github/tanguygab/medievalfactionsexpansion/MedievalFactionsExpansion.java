@@ -5,7 +5,6 @@ import com.dansplugins.factionsystem.faction.MfFaction;
 import com.dansplugins.factionsystem.faction.MfFactionService;
 import com.dansplugins.factionsystem.law.MfLaw;
 import com.dansplugins.factionsystem.law.MfLawService;
-import com.dansplugins.factionsystem.player.MfPlayerId;
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService;
 import com.dansplugins.factionsystem.service.Services;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -49,8 +48,14 @@ public final class MedievalFactionsExpansion extends PlaceholderExpansion {
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         if (!(player instanceof Player p)) return null;
 
-        MfFaction faction = factions.getFactionByPlayerId(p.getUniqueId().toString());
+        MfFaction faction;
+        if (params.startsWith("faction:")) {
+            String f = params.substring(8,params.indexOf("_"));
+            faction = factions.getFaction(f);
+            params = params.substring(8+f.length()+1);
+        } else faction = factions.getFactionByPlayerId(p.getUniqueId().toString());
         if (faction == null) return "";
+
         String del = ", ";
         if (params.endsWith("_nl")) {
             del = "\n";
@@ -67,6 +72,7 @@ public final class MedievalFactionsExpansion extends PlaceholderExpansion {
 
 
         return switch (params) {
+            case "membercount" -> faction.getMembers().size()+"";
             case "enemies" -> relations.getFactionsAtWarWithByFactionId(faction.getId())
                     .stream()
                     .map(f->factions.getFactionByFactionId(f.getValue()).getName())
